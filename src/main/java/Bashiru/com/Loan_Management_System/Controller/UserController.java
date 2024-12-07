@@ -1,12 +1,14 @@
-package com.aspire.controller;
+package Bashiru.com.Loan_Management_System.Controller;
 
 
-import com.aspire.utils.ResponseCodes;
+import Bashiru.com.Loan_Management_System.Model.UserData;
+import Bashiru.com.Loan_Management_System.Repository.UserRepository;
+import Bashiru.com.Loan_Management_System.Service.UserService;
+import Bashiru.com.Loan_Management_System.Utils.ResponseCodes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -15,10 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aspire.exceptions.UserException;
-import com.aspire.model.UserData;
-import com.aspire.repository.UserRepository;
-import com.aspire.service.UserService;
+
 
 @RestController
 @Slf4j
@@ -36,7 +35,7 @@ public class UserController {
 	// register user with given details
 	
 	@PostMapping("/app/signup")
-	public ResponseEntity<String> registerUser(@Validated @RequestBody UserData user) throws UserException
+	public ResponseEntity<String> registerUser(@Validated @RequestBody UserData user)
 	{
 		log.info("Register user with given details ");
 		if (user.getRole().isBlank() || !(user.getRole().equalsIgnoreCase("ROLE_USER") || user.getRole().equalsIgnoreCase("ROLE_ADMIN"))) {
@@ -92,7 +91,7 @@ public class UserController {
 	// Authentication with JWT token 
 	
 	@GetMapping("/logged-in/user")
-	public ResponseEntity<String> LoginUser() throws UserException
+	public ResponseEntity<String> LoginUser()
 	{
 		log.info("Checking the user role ");
 		UserData user =  userService.loginUser();

@@ -1,12 +1,15 @@
-package com.aspire.controller;
+package Bashiru.com.Loan_Management_System.Controller;
 
-import com.aspire.exceptions.UserException;
-import com.aspire.model.LoanDetails;
-import com.aspire.model.UserData;
-import com.aspire.service.LoanService;
-import com.aspire.service.UserService;
-import com.aspire.utils.LoanStage;
-import com.aspire.utils.ResponseCodes;
+
+
+import Bashiru.com.Loan_Management_System.Exceptions.UserException;
+import Bashiru.com.Loan_Management_System.Model.LoanDetails;
+import Bashiru.com.Loan_Management_System.Model.UserData;
+import Bashiru.com.Loan_Management_System.Service.LoanService;
+import Bashiru.com.Loan_Management_System.Service.UserService;
+import Bashiru.com.Loan_Management_System.Utils.LoanStage;
+import Bashiru.com.Loan_Management_System.Utils.ResponseCodes;
+import jdk.jshell.spi.ExecutionControl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,8 @@ import java.util.List;
 
 @RestController
 @Slf4j
-public class LoanDetailsController {
+public class LoanDetailsController
+{
 
     @Autowired
     private UserService userService;
@@ -28,12 +32,14 @@ public class LoanDetailsController {
     private LoanService loanService;
 
     @PostMapping("/loan/create")
-    public ResponseEntity<LoanDetails> createLoan(@RequestBody LoanDetails loanDetails) throws UserException {
+    public ResponseEntity<LoanDetails> createLoan(@RequestBody LoanDetails loanDetails)
+    {
 
         log.info("Started Creating Loan ");
         UserData user =  userService.loginUser();
 
-        if (user != null) {
+        if (user != null)
+        {
 
             LoanDetails loanDetail = loanService.createLoan(user, loanDetails);
             log.info("Loan has been created successfully");
@@ -42,14 +48,17 @@ public class LoanDetailsController {
         }
 
         throw new BadCredentialsException(ResponseCodes.LOGIN_BEFORE_LOAN_CREATION.getValue());
+       // return null;
     }
 
     @GetMapping("/loan/status/{status}")
     public ResponseEntity<String> approveOrRejectLoan(@PathVariable(value = "status") String status,
-                                                  @RequestParam(value = "loanId", required = true) Integer loanId) throws UserException {
+                                                  @RequestParam(value = "loanId", required = true) Integer loanId) throws UserException
+    {
 
         if (Strings.isBlank(status) ||
-                !(LoanStage.APPROVED.getValue().equalsIgnoreCase(status) || LoanStage.REJECTED.getValue().equalsIgnoreCase(status))) {
+                !(LoanStage.APPROVED.getValue().equalsIgnoreCase(status) || LoanStage.REJECTED.getValue().equalsIgnoreCase(status)))
+        {
             log.info(ResponseCodes.LOAN_STATUS_NOT_VALID.getValue() + " for loanId {} ", loanId);
             return new ResponseEntity<>(ResponseCodes.LOAN_STATUS_NOT_VALID.getValue(), HttpStatus.BAD_REQUEST);
         }
@@ -99,7 +108,7 @@ public class LoanDetailsController {
     }
 
     @PatchMapping("/loan/reassign")
-    public ResponseEntity<String> reAssignLoan(@RequestParam("loanId") Integer loanId) throws UserException {
+    public ResponseEntity<String> reAssignLoan(@RequestParam("loanId") Integer loanId) throws UserException, ExecutionControl.UserException {
         log.info("Reassigning Loan for loanId {}", loanId);
         try {
            String msg =  loanService.reassignLoan(loanId);
@@ -114,7 +123,7 @@ public class LoanDetailsController {
 
     @PatchMapping("/loan/paid")
     public ResponseEntity<String> rePaymentPaid(@RequestParam(value = "amount", required = true) Double amount ,
-                                                @RequestParam(value = "loanId", required = true) Integer loanId ) throws UserException {
+                                                @RequestParam(value = "loanId", required = true) Integer loanId ) throws UserException, ExecutionControl.UserException {
         log.info("Starting Paying Loan");
         try {
             String result = loanService.loanPayment(amount, loanId);
